@@ -1,0 +1,1748 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Sorting Algorithm Visualizer</title>
+
+    <style>
+       
+           1. GENERAL PAGE DESIGN
+       
+         {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px
+                        rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d4ed8;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }       
+           2. CONTROL SECTION
+       .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        select,
+        input,
+        button {
+            padding: 11px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            background: white;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+        }
+
+        button:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .secondary {
+            background: #475569;
+        }
+
+        .secondary:hover:not(:disabled) {
+            background: #334155;
+        }
+
+        .success {
+            background: #15803d;
+        }
+
+        .success:hover:not(:disabled) {
+            background: #166534;
+        }
+
+        /* =========================
+           3. VISUALIZATION AREA
+        ========================= */
+
+        .visualization {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .visualization h2 {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 5px;
+        }
+
+        #barContainer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 6px;
+            height: 320px;
+            padding: 15px 5px 0;
+            border-bottom: 2px solid #94a3b8;
+            overflow: hidden;
+        }
+
+        .bar {
+            flex: 1;
+            min-width: 0;
+            max-width: 55px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 6px;
+            border-radius: 5px 5px 0 0;
+            background: #3b82f6;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            transition:
+                height 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        /* =========================
+           4. STATUS SECTION
+        ========================= */
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 5px;
+        }
+
+        #statusMessage {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        #statusDescription {
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           5. STATISTICS
+        ========================= */
+
+        .statistics {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f1f5f9;
+        }
+
+        .stat-card p {
+            margin: 5px 0;
+            color: #64748b;
+        }
+
+        .stat-card h3 {
+            margin: 5px 0;
+            color: #1d4ed8;
+        }
+
+        /* =========================
+           6. COLOR LEGEND
+        ========================= */
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        .blue {
+            background: #3b82f6;
+        }
+
+        .orange {
+            background: #f59e0b;
+        }
+
+        .green {
+            background: #16a34a;
+        }
+
+        /* =========================
+           7. ALGORITHM INFORMATION
+        ========================= */
+
+        .information {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .information h2 {
+            color: #1d4ed8;
+            font-size: 19px;
+        }
+
+        .information p {
+            line-height: 1.7;
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* =========================
+           8. MOBILE RESPONSIVENESS
+        ========================= */
+
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            #barContainer {
+                height: 250px;
+                gap: 3px;
+            }
+
+            .bar {
+                font-size: 10px;
+                padding-top: 4px;
+            }
+
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- PROJECT HEADING -->
+
+        <h1>Sorting Algorithm Visualizer</h1>
+
+        <p class="subtitle">
+            Learn sorting algorithms through
+            interactive animation.
+        </p>
+
+
+        <!-- USER CONTROLS -->
+
+        <div class="controls">
+
+            <div class="control-group">
+
+                <label for="algorithm">
+                    Select Algorithm
+                </label>
+
+                <select id="algorithm">
+
+                    <option value="bubble">
+                        Bubble Sort
+                    </option>
+
+                    <option value="selection">
+                        Selection Sort
+                    </option>
+
+                    <option value="insertion">
+                        Insertion Sort
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="arraySize">
+                    Number of Elements
+                </label>
+
+                <select id="arraySize">
+
+                    <option value="8">8</option>
+
+                    <option value="12" selected>
+                        12
+                    </option>
+
+                    <option value="18">18</option>
+
+                    <option value="25">25</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="speed">
+                    Animation Speed
+                </label>
+
+                <select id="speed">
+
+                    <option value="700">
+                        Slow
+                    </option>
+
+                    <option value="300" selected>
+                        Normal
+                    </option>
+
+                    <option value="80">
+                        Fast
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN BUTTONS -->
+
+        <div class="controls">
+
+            <button id="generateButton"
+                    class="secondary">
+                Generate New Array
+            </button>
+
+            <button id="startButton">
+                Start Sorting
+            </button>
+
+            <button id="pauseButton"
+                    class="secondary"
+                    disabled>
+                Pause
+            </button>
+
+            <button id="nextButton"
+                    class="success">
+                Next Step
+            </button>
+
+            <button id="resetButton"
+                    class="secondary">
+                Reset
+            </button>
+
+        </div>
+
+
+        <!-- VISUALIZATION -->
+
+        <div class="visualization">
+
+            <h2>Sorting Visualization</h2>
+
+            <div id="barContainer"
+                 role="img"
+                 aria-label="Array values displayed as vertical bars">
+            </div>
+
+        </div>
+
+
+        <!-- LEGEND -->
+
+        <div class="legend">
+
+            <div class="legend-item">
+
+                <span class="legend-color blue"></span>
+
+                <span>Unsorted</span>
+
+            </div>
+
+            <div class="legend-item">
+
+                <span class="legend-color orange"></span>
+
+                <span>Being Compared</span>
+
+            </div>
+
+            <div class="legend-item">
+
+                <span class="legend-color green"></span>
+
+                <span>Sorted</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- CURRENT STEP -->
+
+        <div class="status">
+
+            <div id="statusMessage"
+                 aria-live="polite">
+                Ready to start.
+            </div>
+
+            <div id="statusDescription">
+                Generate an array and select
+                an algorithm to begin.
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="statistics">
+
+            <div class="stat-card">
+
+                <p>Comparisons</p>
+
+                <h3 id="comparisons">0</h3>
+
+            </div>
+
+            <div class="stat-card">
+
+                <p>Swaps / Shifts</p>
+
+                <h3 id="swaps">0</h3>
+
+            </div>
+
+            <div class="stat-card">
+
+                <p>Progress</p>
+
+                <h3 id="progress">0%</h3>
+
+            </div>
+
+        </div>
+
+
+        <!-- ALGORITHM EXPLANATION -->
+
+        <div class="information">
+
+            <h2 id="algorithmTitle">
+                Bubble Sort
+            </h2>
+
+            <p id="algorithmDescription">
+                Bubble Sort compares adjacent
+                elements and swaps them when
+                they are in the wrong order.
+            </p>
+
+            <p>
+                <strong>Time Complexity:</strong>
+
+                <span id="timeComplexity">
+                    O(n²) average case
+                </span>
+            </p>
+
+        </div>
+
+
+        <div class="footer">
+
+            Interactive Sorting Algorithm
+            Visualization Mini Project
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =====================================
+           1. GET HTML ELEMENTS
+        ===================================== */
+
+        const algorithmSelect =
+            document.getElementById("algorithm");
+
+        const arraySizeSelect =
+            document.getElementById("arraySize");
+
+        const speedSelect =
+            document.getElementById("speed");
+
+        const barContainer =
+            document.getElementById("barContainer");
+
+        const generateButton =
+            document.getElementById("generateButton");
+
+        const startButton =
+            document.getElementById("startButton");
+
+        const pauseButton =
+            document.getElementById("pauseButton");
+
+        const nextButton =
+            document.getElementById("nextButton");
+
+        const resetButton =
+            document.getElementById("resetButton");
+
+        const statusMessage =
+            document.getElementById("statusMessage");
+
+        const statusDescription =
+            document.getElementById("statusDescription");
+
+        const comparisonsDisplay =
+            document.getElementById("comparisons");
+
+        const swapsDisplay =
+            document.getElementById("swaps");
+
+        const progressDisplay =
+            document.getElementById("progress");
+
+
+        /* =====================================
+           2. PROJECT VARIABLES
+        ===================================== */
+
+        let originalArray = [];
+
+        let array = [];
+
+        let steps = [];
+
+        let currentStep = 0;
+
+        let timer = null;
+
+        let isPlaying = false;
+
+        let isComplete = false;
+
+        let comparisons = 0;
+
+        let swaps = 0;
+
+
+        /* =====================================
+           3. ALGORITHM INFORMATION
+        ===================================== */
+
+        const algorithmInformation = {
+
+            bubble: {
+
+                title: "Bubble Sort",
+
+                description:
+                    "Bubble Sort compares adjacent " +
+                    "elements and swaps them if " +
+                    "they are in the wrong order.",
+
+                complexity:
+                    "O(n²) average case"
+
+            },
+
+            selection: {
+
+                title: "Selection Sort",
+
+                description:
+                    "Selection Sort finds the " +
+                    "smallest value in the unsorted " +
+                    "section and moves it to the " +
+                    "correct position.",
+
+                complexity:
+                    "O(n²) in all cases"
+
+            },
+
+            insertion: {
+
+                title: "Insertion Sort",
+
+                description:
+                    "Insertion Sort takes one value " +
+                    "at a time and inserts it into " +
+                    "its correct position in the " +
+                    "sorted section.",
+
+                complexity:
+                    "O(n²) average case"
+
+            }
+
+        };
+
+
+        /* =====================================
+           4. UPDATE ALGORITHM INFORMATION
+        ===================================== */
+
+        function updateAlgorithmInformation() {
+
+            const selected =
+                algorithmSelect.value;
+
+            const info =
+                algorithmInformation[selected];
+
+            document.getElementById(
+                "algorithmTitle"
+            ).textContent = info.title;
+
+            document.getElementById(
+                "algorithmDescription"
+            ).textContent = info.description;
+
+            document.getElementById(
+                "timeComplexity"
+            ).textContent = info.complexity;
+
+        }
+
+
+        /* =====================================
+           5. GENERATE RANDOM ARRAY
+        ===================================== */
+
+        function generateArray() {
+
+            stopAnimation();
+
+            const size =
+                Number(arraySizeSelect.value);
+
+            originalArray = [];
+
+            for (let i = 0; i < size; i++) {
+
+                const randomNumber =
+                    Math.floor(Math.random() * 90) + 10;
+
+                originalArray.push(randomNumber);
+
+            }
+
+            array = [...originalArray];
+
+            steps = [];
+
+            currentStep = 0;
+
+            comparisons = 0;
+
+            swaps = 0;
+
+            isComplete = false;
+
+            steps.push({
+
+                array: [...array],
+
+                active: [],
+
+                sorted: [],
+
+                comparisons: 0,
+
+                swaps: 0,
+
+                message: "New array generated.",
+
+                description:
+                    "Select an algorithm and start sorting."
+
+            });
+
+            renderStep(0);
+
+            updateAlgorithmInformation();
+
+            updateControls();
+
+        }
+
+
+        /* =====================================
+           6. SAVE A VISUALIZATION STEP
+        ===================================== */
+
+        function saveStep(
+            values,
+            active,
+            sorted,
+            message,
+            description,
+            comparisonCount,
+            swapCount
+        ) {
+
+            steps.push({
+
+                array: [...values],
+
+                active: [...active],
+
+                sorted: [...sorted],
+
+                comparisons: comparisonCount,
+
+                swaps: swapCount,
+
+                message: message,
+
+                description: description
+
+            });
+
+        }
+
+
+        /* =====================================
+           7. BUBBLE SORT
+        ===================================== */
+
+        function bubbleSort(input) {
+
+            const values = [...input];
+
+            const n = values.length;
+
+            const sorted = new Set();
+
+            let comparisonCount = 0;
+
+            let swapCount = 0;
+
+            for (let i = 0; i < n - 1; i++) {
+
+                let swapped = false;
+
+                for (let j = 0;
+                     j < n - i - 1;
+                     j++) {
+
+                    comparisonCount++;
+
+                    saveStep(
+
+                        values,
+
+                        [j, j + 1],
+
+                        [...sorted],
+
+                        "Comparing " +
+                        values[j] + " and " +
+                        values[j + 1],
+
+                        "Bubble Sort compares two " +
+                        "adjacent values.",
+
+                        comparisonCount,
+
+                        swapCount
+
+                    );
+
+
+                    if (values[j] > values[j + 1]) {
+
+                        const temp = values[j];
+
+                        values[j] = values[j + 1];
+
+                        values[j + 1] = temp;
+
+                        swapCount++;
+
+                        swapped = true;
+
+                        saveStep(
+
+                            values,
+
+                            [j, j + 1],
+
+                            [...sorted],
+
+                            "Swapping elements",
+
+                            "The larger value moves " +
+                            "one position to the right.",
+
+                            comparisonCount,
+
+                            swapCount
+
+                        );
+
+                    }
+
+                }
+
+                sorted.add(n - i - 1);
+
+                saveStep(
+
+                    values,
+
+                    [],
+
+                    [...sorted],
+
+                    "One position is sorted.",
+
+                    "The largest remaining value " +
+                    "has reached its correct position.",
+
+                    comparisonCount,
+
+                    swapCount
+
+                );
+
+
+                if (!swapped) {
+
+                    for (let k = 0; k < n; k++) {
+
+                        sorted.add(k);
+
+                    }
+
+                    break;
+
+                }
+
+            }
+
+            for (let k = 0; k < n; k++) {
+
+                sorted.add(k);
+
+            }
+
+            saveStep(
+
+                values,
+
+                [],
+
+                [...sorted],
+
+                "Bubble Sort completed.",
+
+                "All elements are sorted " +
+                "in ascending order.",
+
+                comparisonCount,
+
+                swapCount
+
+            );
+
+        }
+
+
+        /* =====================================
+           8. SELECTION SORT
+        ===================================== */
+
+        function selectionSort(input) {
+
+            const values = [...input];
+
+            const n = values.length;
+
+            const sorted = new Set();
+
+            let comparisonCount = 0;
+
+            let swapCount = 0;
+
+            for (let i = 0; i < n - 1; i++) {
+
+                let minIndex = i;
+
+                for (let j = i + 1; j < n; j++) {
+
+                    comparisonCount++;
+
+                    saveStep(
+
+                        values,
+
+                        [minIndex, j],
+
+                        [...sorted],
+
+                        "Searching for the minimum.",
+
+                        "Compare the current minimum " +
+                        "with the next element.",
+
+                        comparisonCount,
+
+                        swapCount
+
+                    );
+
+
+                    if (values[j] < values[minIndex]) {
+
+                        minIndex = j;
+
+                        saveStep(
+
+                            values,
+
+                            [minIndex, j],
+
+                            [...sorted],
+
+                            "A smaller value was found.",
+
+                            "Update the position of " +
+                            "the minimum element.",
+
+                            comparisonCount,
+
+                            swapCount
+
+                        );
+
+                    }
+
+                }
+
+
+                if (minIndex !== i) {
+
+                    const temp = values[i];
+
+                    values[i] = values[minIndex];
+
+                    values[minIndex] = temp;
+
+                    swapCount++;
+
+                    saveStep(
+
+                        values,
+
+                        [i, minIndex],
+
+                        [...sorted],
+
+                        "Moving the minimum value.",
+
+                        "Place the smallest remaining " +
+                        "value in the correct position.",
+
+                        comparisonCount,
+
+                        swapCount
+
+                    );
+
+                }
+
+
+                sorted.add(i);
+
+            }
+
+
+            for (let k = 0; k < n; k++) {
+
+                sorted.add(k);
+
+            }
+
+            saveStep(
+
+                values,
+
+                [],
+
+                [...sorted],
+
+                "Selection Sort completed.",
+
+                "All elements are sorted " +
+                "in ascending order.",
+
+                comparisonCount,
+
+                swapCount
+
+            );
+
+        }
+
+
+        /* =====================================
+           9. INSERTION SORT
+        ===================================== */
+
+        function insertionSort(input) {
+
+            const values = [...input];
+
+            const n = values.length;
+
+            const sorted = new Set();
+
+            let comparisonCount = 0;
+
+            let swapCount = 0;
+
+
+            sorted.add(0);
+
+
+            for (let i = 1; i < n; i++) {
+
+                const key = values[i];
+
+                let j = i - 1;
+
+
+                saveStep(
+
+                    values,
+
+                    [i],
+
+                    [...sorted],
+
+                    "Selecting " + key,
+
+                    "Take the next element and " +
+                    "find its correct position.",
+
+                    comparisonCount,
+
+                    swapCount
+
+                );
+
+
+                while (j >= 0) {
+
+                    comparisonCount++;
+
+                    saveStep(
+
+                        values,
+
+                        [j, j + 1],
+
+                        [...sorted],
+
+                        "Comparing " +
+                        values[j] + " and " + key,
+
+                        "Check whether the current " +
+                        "element is greater than the key.",
+
+                        comparisonCount,
+
+                        swapCount
+
+                    );
+
+
+                    if (values[j] > key) {
+
+                        values[j + 1] = values[j];
+
+                        swapCount++;
+
+                        saveStep(
+
+                            values,
+
+                            [j, j + 1],
+
+                            [...sorted],
+
+                            "Shifting an element.",
+
+                            "Move the larger element " +
+                            "one position to the right.",
+
+                            comparisonCount,
+
+                            swapCount
+
+                        );
+
+                        j--;
+
+                    } else {
+
+                        break;
+
+                    }
+
+                }
+
+
+                if (j >= 0) {
+
+                    comparisonCount++;
+
+                }
+
+
+                values[j + 1] = key;
+
+                sorted.clear();
+
+                for (let k = 0; k <= i; k++) {
+
+                    sorted.add(k);
+
+                }
+
+
+                saveStep(
+
+                    values,
+
+                    [j + 1],
+
+                    [...sorted],
+
+                    "Inserted " + key,
+
+                    "The selected value is now " +
+                    "in its correct position.",
+
+                    comparisonCount,
+
+                    swapCount
+
+                );
+
+            }
+
+
+            for (let k = 0; k < n; k++) {
+
+                sorted.add(k);
+
+            }
+
+
+            saveStep(
+
+                values,
+
+                [],
+
+                [...sorted],
+
+                "Insertion Sort completed.",
+
+                "All elements are sorted " +
+                "in ascending order.",
+
+                comparisonCount,
+
+                swapCount
+
+            );
+
+        }
+
+
+        /* =====================================
+           10. BUILD SORTING STEPS
+        ===================================== */
+
+        function buildSortingSteps() {
+
+            steps = [];
+
+            currentStep = 0;
+
+            comparisons = 0;
+
+            swaps = 0;
+
+            const selected =
+                algorithmSelect.value;
+
+
+            saveStep(
+
+                array,
+
+                [],
+
+                [],
+
+                "Sorting started.",
+
+                "Observe how the selected " +
+                "algorithm arranges the numbers.",
+
+                0,
+
+                0
+
+            );
+
+
+            if (selected === "bubble") {
+
+                bubbleSort(array);
+
+            } else if (selected === "selection") {
+
+                selectionSort(array);
+
+            } else if (selected === "insertion") {
+
+                insertionSort(array);
+
+            }
+
+        }
+
+
+        /* =====================================
+           11. DISPLAY BARS
+        ===================================== */
+
+        function renderStep(stepIndex) {
+
+            if (
+                steps.length === 0 ||
+                stepIndex < 0 ||
+                stepIndex >= steps.length
+            ) {
+
+                return;
+
+            }
+
+
+            const step = steps[stepIndex];
+
+            const values = step.array;
+
+            const maxValue = Math.max(...values, 1);
+
+            barContainer.innerHTML = "";
+
+
+            values.forEach((value, index) => {
+
+                const bar =
+                    document.createElement("div");
+
+                bar.className = "bar";
+
+                const height =
+                    (value / maxValue) * 275;
+
+                bar.style.height =
+                    Math.max(height, 15) + "px";
+
+
+                if (step.sorted.includes(index)) {
+
+                    bar.style.backgroundColor =
+                        "#16a34a";
+
+                } else if (
+                    step.active.includes(index)
+                ) {
+
+                    bar.style.backgroundColor =
+                        "#f59e0b";
+
+                } else {
+
+                    bar.style.backgroundColor =
+                        "#3b82f6";
+
+                }
+
+
+                bar.textContent = value;
+
+                bar.title =
+                    "Position " +
+                    (index + 1) +
+                    ": " + value;
+
+
+                barContainer.appendChild(bar);
+
+            });
+
+
+            statusMessage.textContent =
+                step.message;
+
+            statusDescription.textContent =
+                step.description;
+
+
+            comparisonsDisplay.textContent =
+                step.comparisons;
+
+            swapsDisplay.textContent =
+                step.swaps;
+
+
+            const progress =
+                steps.length <= 1
+                    ? 0
+                    : Math.round(
+                        (stepIndex / (steps.length - 1))
+                        * 100
+                    );
+
+
+            progressDisplay.textContent =
+                progress + "%";
+
+
+            isComplete =
+                stepIndex === steps.length - 1 &&
+                step.message.includes("completed");
+
+            updateControls();
+
+        }
+
+
+        /* =====================================
+           12. UPDATE BUTTON STATES
+        ===================================== */
+
+        function updateControls() {
+
+            const busy = isPlaying;
+
+            generateButton.disabled = busy;
+
+            algorithmSelect.disabled = busy;
+
+            arraySizeSelect.disabled = busy;
+
+            startButton.disabled =
+                busy ||
+                (
+                    steps.length > 1 &&
+                    currentStep < steps.length - 1
+                );
+
+            pauseButton.disabled = !busy;
+
+            nextButton.disabled =
+                busy ||
+                (
+                    steps.length > 1 &&
+                    currentStep >= steps.length - 1
+                );
+
+        }
+
+
+        /* =====================================
+           13. START ANIMATION
+        ===================================== */
+
+        function startSorting() {
+
+            if (isPlaying) {
+
+                return;
+
+            }
+
+
+            if (
+                steps.length > 1 &&
+                currentStep < steps.length - 1
+            ) {
+
+                return;
+
+            }
+
+
+            array = [...originalArray];
+
+            buildSortingSteps();
+
+            currentStep = 0;
+
+            renderStep(currentStep);
+
+            isPlaying = true;
+
+            updateControls();
+
+            runAnimation();
+
+        }
+
+
+        /* =====================================
+           14. PLAY ANIMATION
+        ===================================== */
+
+        function runAnimation() {
+
+            if (!isPlaying) {
+
+                return;
+
+            }
+
+
+            if (
+                currentStep >= steps.length - 1
+            ) {
+
+                stopAnimation();
+
+                currentStep = steps.length - 1;
+
+                renderStep(currentStep);
+
+                statusMessage.textContent =
+                    "Sorting completed successfully.";
+
+                updateControls();
+
+                return;
+
+            }
+
+
+            timer = setTimeout(() => {
+
+                if (!isPlaying) {
+
+                    return;
+
+                }
+
+                currentStep++;
+
+                renderStep(currentStep);
+
+                runAnimation();
+
+            }, Number(speedSelect.value));
+
+        }
+
+
+        /* =====================================
+           15. PAUSE ANIMATION
+        ===================================== */
+
+        function pauseAnimation() {
+
+            stopAnimation();
+
+            statusMessage.textContent =
+                "Animation paused.";
+
+            updateControls();
+
+        }
+
+
+        function stopAnimation() {
+
+            isPlaying = false;
+
+            if (timer !== null) {
+
+                clearTimeout(timer);
+
+                timer = null;
+
+            }
+
+            updateControls();
+
+        }
+
+
+        /* =====================================
+           16. NEXT STEP
+        ===================================== */
+
+        function nextStep() {
+
+            if (isPlaying) {
+
+                return;
+
+            }
+
+
+            if (steps.length <= 1) {
+
+                array = [...originalArray];
+
+                buildSortingSteps();
+
+                currentStep = 0;
+
+            }
+
+
+            if (
+                currentStep < steps.length - 1
+            ) {
+
+                currentStep++;
+
+                renderStep(currentStep);
+
+            }
+
+        }
+
+
+        /* =====================================
+           17. RESET PROJECT
+        ===================================== */
+
+        function resetVisualization() {
+
+            stopAnimation();
+
+            array = [...originalArray];
+
+            steps = [];
+
+            currentStep = 0;
+
+            comparisons = 0;
+
+            swaps = 0;
+
+            isComplete = false;
+
+
+            steps.push({
+
+                array: [...array],
+
+                active: [],
+
+                sorted: [],
+
+                comparisons: 0,
+
+                swaps: 0,
+
+                message: "Visualization reset.",
+
+                description:
+                    "The original array has been restored."
+
+            });
+
+
+            renderStep(0);
+
+            updateControls();
+
+        }
+
+
+        /* =====================================
+           18. BUTTON EVENT LISTENERS
+        ===================================== */
+
+        generateButton.addEventListener(
+            "click",
+            generateArray
+        );
+
+
+        startButton.addEventListener(
+            "click",
+            startSorting
+        );
+
+
+        pauseButton.addEventListener(
+            "click",
+            pauseAnimation
+        );
+
+
+        nextButton.addEventListener(
+            "click",
+            nextStep
+        );
+
+
+        resetButton.addEventListener(
+            "click",
+            resetVisualization
+        );
+
+
+        algorithmSelect.addEventListener(
+            "change",
+            () => {
+
+                updateAlgorithmInformation();
+
+                resetVisualization();
+
+            }
+        );
+
+
+        arraySizeSelect.addEventListener(
+            "change",
+            generateArray
+        );
+
+
+        /* =====================================
+           19. INITIALIZE PROJECT
+        ===================================== */
+
+        generateArray();
+
+        updateAlgorithmInformation();
+
+    </script>
+
+</body>
+
+</html>
+```
